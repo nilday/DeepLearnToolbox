@@ -1,4 +1,4 @@
-function [er, bad] = cnntest(net, x, y)
+function [er, bad] = textcnntest(net, x, y)
     %  feedforward
     net = cnnff(net, x); % 前向传播得到输出
 	% [Y,I] = max(X) returns the indices of the maximum values in vector I

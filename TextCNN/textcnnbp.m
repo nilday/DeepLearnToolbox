@@ -1,4 +1,4 @@
-function net = cnnbp(net, y)
+function net = textcnnbp(net, y)
     n = numel(net.layers); % 网络层数
 
     %  error

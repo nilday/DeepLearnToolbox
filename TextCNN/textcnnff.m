@@ -1,4 +1,4 @@
-function net = cnnff(net, x)
+function net = textcnnff(net, x)
     n = numel(net.layers); % 层数
     net.layers{1}.a{1} = x; % 网络的第一层就是输入，但这里的输入包含了多个训练图像
     inputmaps = 1; % 输入层只有一个特征map，也就是原始的输入图像
