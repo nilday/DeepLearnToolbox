@@ -1,10 +1,10 @@
-function [er, bad] = textcnntest(net, x, y)
+function [er, bad] = cnntest(net, x, y)
     %  feedforward
-    net = cnnff(net, x); % å‰å‘ä¼ æ’­å¾—åˆ°è¾“å‡º
+    net = cnnff(net, x); % Ç°Ïò´«²¥µÃµ½Êä³ö
 	% [Y,I] = max(X) returns the indices of the maximum values in vector I
-    [~, h] = max(net.o); % æ‰¾åˆ°æœ€å¤§çš„è¾“å‡ºå¯¹åº”çš„æ ‡ç­¾
-    [~, a] = max(y); 	 % æ‰¾åˆ°æœ€å¤§çš„æœŸæœ›è¾“å‡ºå¯¹åº”çš„ç´¢å¼•
-    bad = find(h ~= a);  % æ‰¾åˆ°ä»–ä»¬ä¸ç›¸åŒçš„ä¸ªæ•°ï¼Œä¹Ÿå°±æ˜¯é”™è¯¯çš„æ¬¡æ•°
+    [~, h] = max(net.o); % ÕÒµ½×î´óµÄÊä³ö¶ÔÓ¦µÄ±êÇ©
+    [~, a] = max(y); 	 % ÕÒµ½×î´óµÄÆÚÍûÊä³ö¶ÔÓ¦µÄË÷Òı
+    bad = find(h ~= a);  % ÕÒµ½ËûÃÇ²»ÏàÍ¬µÄ¸öÊı£¬Ò²¾ÍÊÇ´íÎóµÄ´ÎÊı
 
-    er = numel(bad) / size(y, 2); % è®¡ç®—é”™è¯¯ç‡
+    er = numel(bad) / size(y, 2); % ¼ÆËã´íÎóÂÊ
 end

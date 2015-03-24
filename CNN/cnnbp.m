@@ -1,47 +1,47 @@
 function net = cnnbp(net, y)
-    n = numel(net.layers); % ç½‘ç»œå±‚æ•°
+    n = numel(net.layers); % ÍøÂç²ãÊı
 
     %  error
     net.e = net.o - y; 
     %  loss function
-	% ä»£ä»·å‡½æ•°æ˜¯ å‡æ–¹è¯¯å·®
+	% ´ú¼Ûº¯ÊıÊÇ ¾ù·½Îó²î
     net.L = 1/2* sum(net.e(:) .^ 2) / size(net.e, 2);
 
     %%  backprop deltas
-	% è¿™é‡Œå¯ä»¥å‚è€ƒ UFLDL çš„ åå‘ä¼ å¯¼ç®—æ³• çš„è¯´æ˜
-	% è¾“å‡ºå±‚çš„ çµæ•åº¦ æˆ–è€… æ®‹å·®
+	% ÕâÀï¿ÉÒÔ²Î¿¼ UFLDL µÄ ·´Ïò´«µ¼Ëã·¨ µÄËµÃ÷
+	% Êä³ö²ãµÄ ÁéÃô¶È »òÕß ²Ğ²î
     net.od = net.e .* (net.o .* (1 - net.o));   %  output delta
-	% æ®‹å·® åå‘ä¼ æ’­å› å‰ä¸€å±‚
+	% ²Ğ²î ·´Ïò´«²¥»Ø Ç°Ò»²ã
     net.fvd = (net.ffW' * net.od);              %  feature vector delta
     if strcmp(net.layers{n}.type, 'c')         %  only conv layers has sigm function
         net.fvd = net.fvd .* (net.fv .* (1 - net.fv));
     end
 
     %  reshape feature vector deltas into output map style
-    sa = size(net.layers{n}.a{1}); % æœ€åä¸€å±‚ç‰¹å¾mapçš„å¤§å°ã€‚è¿™é‡Œçš„æœ€åä¸€å±‚éƒ½æ˜¯æŒ‡è¾“å‡ºå±‚çš„å‰ä¸€å±‚
-    fvnum = sa(1) * sa(2); % å› ä¸ºæ˜¯å°†æœ€åä¸€å±‚ç‰¹å¾mapæ‹‰æˆä¸€æ¡å‘é‡ï¼Œæ‰€ä»¥å¯¹äºä¸€ä¸ªæ ·æœ¬æ¥è¯´ï¼Œç‰¹å¾ç»´æ•°æ˜¯è¿™æ ·
-    for j = 1 : numel(net.layers{n}.a) % æœ€åä¸€å±‚çš„ç‰¹å¾mapçš„ä¸ªæ•°
-		% åœ¨fvdé‡Œé¢ä¿å­˜çš„æ˜¯æ‰€æœ‰æ ·æœ¬çš„ç‰¹å¾å‘é‡ï¼ˆåœ¨cnnff.må‡½æ•°ä¸­ç”¨ç‰¹å¾mapæ‹‰æˆçš„ï¼‰ï¼Œæ‰€ä»¥è¿™é‡Œéœ€è¦é‡æ–°
-		% å˜æ¢å›æ¥ç‰¹å¾mapçš„å½¢å¼ã€‚d ä¿å­˜çš„æ˜¯ deltaï¼Œä¹Ÿå°±æ˜¯ çµæ•åº¦ æˆ–è€… æ®‹å·®
+    sa = size(net.layers{n}.a{1}); % ×îºóÒ»²ãÌØÕ÷mapµÄ´óĞ¡¡£ÕâÀïµÄ×îºóÒ»²ã¶¼ÊÇÖ¸Êä³ö²ãµÄÇ°Ò»²ã
+    fvnum = sa(1) * sa(2); % ÒòÎªÊÇ½«×îºóÒ»²ãÌØÕ÷mapÀ­³ÉÒ»ÌõÏòÁ¿£¬ËùÒÔ¶ÔÓÚÒ»¸öÑù±¾À´Ëµ£¬ÌØÕ÷Î¬ÊıÊÇÕâÑù
+    for j = 1 : numel(net.layers{n}.a) % ×îºóÒ»²ãµÄÌØÕ÷mapµÄ¸öÊı
+		% ÔÚfvdÀïÃæ±£´æµÄÊÇËùÓĞÑù±¾µÄÌØÕ÷ÏòÁ¿£¨ÔÚcnnff.mº¯ÊıÖĞÓÃÌØÕ÷mapÀ­³ÉµÄ£©£¬ËùÒÔÕâÀïĞèÒªÖØĞÂ
+		% ±ä»»»ØÀ´ÌØÕ÷mapµÄĞÎÊ½¡£d ±£´æµÄÊÇ delta£¬Ò²¾ÍÊÇ ÁéÃô¶È »òÕß ²Ğ²î
         net.layers{n}.d{j} = reshape(net.fvd(((j - 1) * fvnum + 1) : j * fvnum, :), sa(1), sa(2), sa(3));
     end
 
-	% å¯¹äº è¾“å‡ºå±‚å‰é¢çš„å±‚ï¼ˆä¸è¾“å‡ºå±‚è®¡ç®—æ®‹å·®çš„æ–¹å¼ä¸åŒï¼‰
+	% ¶ÔÓÚ Êä³ö²ãÇ°ÃæµÄ²ã£¨ÓëÊä³ö²ã¼ÆËã²Ğ²îµÄ·½Ê½²»Í¬£©
     for l = (n - 1) : -1 : 1
         if strcmp(net.layers{l}.type, 'c')
-            for j = 1 : numel(net.layers{l}.a) % è¯¥å±‚ç‰¹å¾mapçš„ä¸ªæ•°
-                % net.layers{l}.d{j} ä¿å­˜çš„æ˜¯ ç¬¬lå±‚ çš„ ç¬¬jä¸ª map çš„ çµæ•åº¦mapã€‚ ä¹Ÿå°±æ˜¯æ¯ä¸ªç¥ç»å…ƒèŠ‚ç‚¹çš„deltaçš„å€¼
-				% expandçš„æ“ä½œç›¸å½“äºå¯¹l+1å±‚çš„çµæ•åº¦mapè¿›è¡Œä¸Šé‡‡æ ·ã€‚ç„¶åå‰é¢çš„æ“ä½œç›¸å½“äºå¯¹è¯¥å±‚çš„è¾“å…¥aè¿›è¡Œsigmoidæ±‚å¯¼
-				% è¿™æ¡å…¬å¼è¯·å‚è€ƒ Notes on Convolutional Neural Networks
+            for j = 1 : numel(net.layers{l}.a) % ¸Ã²ãÌØÕ÷mapµÄ¸öÊı
+                % net.layers{l}.d{j} ±£´æµÄÊÇ µÚl²ã µÄ µÚj¸ö map µÄ ÁéÃô¶Èmap¡£ Ò²¾ÍÊÇÃ¿¸öÉñ¾­Ôª½ÚµãµÄdeltaµÄÖµ
+				% expandµÄ²Ù×÷Ïàµ±ÓÚ¶Ôl+1²ãµÄÁéÃô¶Èmap½øĞĞÉÏ²ÉÑù¡£È»ºóÇ°ÃæµÄ²Ù×÷Ïàµ±ÓÚ¶Ô¸Ã²ãµÄÊäÈëa½øĞĞsigmoidÇóµ¼
+				% ÕâÌõ¹«Ê½Çë²Î¿¼ Notes on Convolutional Neural Networks
 				% for k = 1:size(net.layers{l + 1}.d{j}, 3)
 					% net.layers{l}.d{j}(:,:,k) = net.layers{l}.a{j}(:,:,k) .* (1 - net.layers{l}.a{j}(:,:,k)) .*  kron(net.layers{l + 1}.d{j}(:,:,k), ones(net.layers{l + 1}.scale)) / net.layers{l + 1}.scale ^ 2;
 				% end
 				net.layers{l}.d{j} = net.layers{l}.a{j} .* (1 - net.layers{l}.a{j}) .* (expand(net.layers{l + 1}.d{j}, [net.layers{l + 1}.scale net.layers{l + 1}.scale 1]) / net.layers{l + 1}.scale ^ 2);
             end
         elseif strcmp(net.layers{l}.type, 's')
-            for i = 1 : numel(net.layers{l}.a) % ç¬¬lå±‚ç‰¹å¾mapçš„ä¸ªæ•°
+            for i = 1 : numel(net.layers{l}.a) % µÚl²ãÌØÕ÷mapµÄ¸öÊı
                 z = zeros(size(net.layers{l}.a{1}));
-                for j = 1 : numel(net.layers{l + 1}.a) % ç¬¬l+1å±‚ç‰¹å¾mapçš„ä¸ªæ•°
+                for j = 1 : numel(net.layers{l + 1}.a) % µÚl+1²ãÌØÕ÷mapµÄ¸öÊı
                      z = z + convn(net.layers{l + 1}.d{j}, rot180(net.layers{l + 1}.k{i}{j}), 'full');
                 end
                 net.layers{l}.d{i} = z;
@@ -50,21 +50,21 @@ function net = cnnbp(net, y)
     end
 
     %%  calc gradients
-	% è¿™é‡Œä¸ Notes on Convolutional Neural Networks ä¸­ä¸åŒï¼Œè¿™é‡Œçš„ å­é‡‡æ · å±‚æ²¡æœ‰å‚æ•°ï¼Œä¹Ÿæ²¡æœ‰
-	% æ¿€æ´»å‡½æ•°ï¼Œæ‰€ä»¥åœ¨å­é‡‡æ ·å±‚æ˜¯æ²¡æœ‰éœ€è¦æ±‚è§£çš„å‚æ•°çš„
+	% ÕâÀïÓë Notes on Convolutional Neural Networks ÖĞ²»Í¬£¬ÕâÀïµÄ ×Ó²ÉÑù ²ãÃ»ÓĞ²ÎÊı£¬Ò²Ã»ÓĞ
+	% ¼¤»îº¯Êı£¬ËùÒÔÔÚ×Ó²ÉÑù²ãÊÇÃ»ÓĞĞèÒªÇó½âµÄ²ÎÊıµÄ
     for l = 2 : n
         if strcmp(net.layers{l}.type, 'c')
             for j = 1 : numel(net.layers{l}.a)
                 for i = 1 : numel(net.layers{l - 1}.a)
-					% dk ä¿å­˜çš„æ˜¯ è¯¯å·®å¯¹å·ç§¯æ ¸ çš„å¯¼æ•°
+					% dk ±£´æµÄÊÇ Îó²î¶Ô¾í»ıºË µÄµ¼Êı
                     net.layers{l}.dk{i}{j} = convn(flipall(net.layers{l - 1}.a{i}), net.layers{l}.d{j}, 'valid') / size(net.layers{l}.d{j}, 3);
                 end
-				% db ä¿å­˜çš„æ˜¯ è¯¯å·®å¯¹äºbiasåŸº çš„å¯¼æ•°
+				% db ±£´æµÄÊÇ Îó²î¶ÔÓÚbias»ù µÄµ¼Êı
                 net.layers{l}.db{j} = sum(net.layers{l}.d{j}(:)) / size(net.layers{l}.d{j}, 3);
             end
         end
     end
-	% æœ€åä¸€å±‚perceptronçš„gradientçš„è®¡ç®—
+	% ×îºóÒ»²ãperceptronµÄgradientµÄ¼ÆËã
     net.dffW = net.od * (net.fv)' / size(net.od, 2);
     net.dffb = mean(net.od, 2);
 
