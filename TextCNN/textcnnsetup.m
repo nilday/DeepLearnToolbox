@@ -1,9 +1,9 @@
 function net = cnnsetup(net, x, y)
     inputmaps = 1;
 	% B=squeeze(A) 返回和矩阵A相同元素但所有单一维都移除的矩阵B，单一维是满足size(A,dim)=1的维。
-	% train_x中图像的存放方式是三维的reshape(train_x',28,28,60000)，前面两维表示图像的行与列，
+	% train_x中图像的存放方式是三维的reshape(train_x',784,1,60000)，前面两维表示图像的行与列，
 	% 第三维就表示有多少个图像。这样squeeze(x(:, :, 1))就相当于取第一个图像样本后，再把第三维
-	% 移除，就变成了28x28的矩阵，也就是得到一幅图像，再size一下就得到了训练样本图像的行数与列数了
+	% 移除，就变成了784x1的矩阵，也就是得到一幅图像，再size一下就得到了训练样本图像的行数与列数了
     mapsize = size(squeeze(x(:, :, 1)));
 
 	% 下面通过传入net这个结构体来逐层构建CNN网络
@@ -11,9 +11,10 @@ function net = cnnsetup(net, x, y)
 	% net.layers中有五个struct类型的元素，实际上就表示CNN共有五层，这里范围的是5
     for l = 1 : numel(net.layers)   %  layer
         if strcmp(net.layers{l}.type, 's') % 如果这层是 子采样层
-            % subsampling层的mapsize，最开始mapsize是每张图的大小28*28
-			% 这里除以scale=2，就是pooling之后图的大小，pooling域之间没有重叠，所以pooling后的图像为14*14
+            % subsampling层的mapsize，最开始mapsize是每张图的大小784*1
+			% 这里除以scale=2，就是pooling之后图的大小，pooling域之间没有重叠，所以pooling后的图像为392*1
 			% 注意这里的右边的mapsize保存的都是上一层每张特征map的大小，它会随着循环进行不断更新
+            %TODO 
 			mapsize = floor(mapsize / net.layers{l}.scale);
             for j = 1 : inputmaps % inputmap就是上一层有多少张特征图
                 net.layers{l}.b{j} = 0; % 将偏置初始化为0

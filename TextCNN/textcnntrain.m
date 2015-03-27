@@ -23,12 +23,12 @@ function net = cnntrain(net, x, y, opts)
             batch_y = y(:,    kk((l - 1) * opts.batchsize + 1 : l * opts.batchsize));
 
 			% 在当前的网络权值和网络输入下计算网络的输出
-            net = cnnff(net, batch_x); % Feedforward
+            net = textcnnff(net, batch_x); % Feedforward
 			% 得到上面的网络输出后，通过对应的样本标签用bp算法来得到误差对网络权值
 			%（也就是那些卷积核的元素）的导数
-            net = cnnbp(net, batch_y); % Backpropagation
+            net = textcnnbp(net, batch_y); % Backpropagation
 			% 得到误差对权值的导数后，就通过权值更新方法去更新权值
-            net = cnnapplygrads(net, opts);
+            net = textcnnapplygrads(net, opts);
             if isempty(net.rL)
                 net.rL(1) = net.L; % 代价函数值，也就是误差值
             end
