@@ -1,4 +1,4 @@
-function net = cnnsetup(net, x, y)
+function net = textcnnsetup(net, x, y)
     inputmaps = 1;
 	% B=squeeze(A) 返回和矩阵A相同元素但所有单一维都移除的矩阵B，单一维是满足size(A,dim)=1的维。
 	% train_x中图像的存放方式是三维的reshape(train_x',784,1,60000)，前面两维表示图像的行与列，
